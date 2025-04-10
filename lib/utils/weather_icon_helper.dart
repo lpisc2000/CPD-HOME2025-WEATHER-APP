@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+// This function takes a weather icon string and returns the corresponding Flutter IconData.
+// It uses a switch statement to match the icon string with the appropriate icon.
 IconData getWeatherIcon(String icon) {
   switch (icon) {
     case 'clear-day':

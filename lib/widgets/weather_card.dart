@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../utils/weather_icon_helper.dart';
 
+/// This widget displays a weather card with the current weather conditions.
+/// It takes a [data] map containing weather information as a parameter.
 class WeatherCard extends StatelessWidget {
   final Map<String, dynamic> data;
 
@@ -9,9 +11,13 @@ class WeatherCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //extract the current weather conditions from the data map
     final current = data['currentConditions'];
+
+    //get the appropriate weather icon based on the current conditions
     final icon = getWeatherIcon(current['icon']);
 
+    //format the date if available in valid ISO format
     String? dateLabel;
     final rawDate = current['datetime'];
     if (rawDate != null && rawDate.toString().contains('-')) {
@@ -19,7 +25,7 @@ class WeatherCard extends StatelessWidget {
         final parsed = DateTime.parse(rawDate);
         dateLabel = DateFormat('EEEE, MMM d').format(parsed);
       } catch (e) {
-        dateLabel = null;
+        dateLabel = null; //fallback if parsing fails
       }
     }
 
@@ -34,6 +40,8 @@ class WeatherCard extends StatelessWidget {
           children: [
             Icon(icon, size: 36, color: Colors.blueAccent),
             const SizedBox(width: 16),
+
+            //right side column with weather info
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -48,6 +56,7 @@ class WeatherCard extends StatelessWidget {
                       ),
                     ),
                   const SizedBox(height: 4),
+                  //displays the current temperature
                   Text(
                     "${current['temp']}°C",
                     style: const TextStyle(
