@@ -11,7 +11,8 @@ class NotificationService {
 
   Future<void> showNotification(String title, String body) async {
     const androidDetails = AndroidNotificationDetails(
-      'channelId', 'Weather Alerts',
+      'channelId',
+      'Weather Alerts',
       importance: Importance.max,
       priority: Priority.high,
     );

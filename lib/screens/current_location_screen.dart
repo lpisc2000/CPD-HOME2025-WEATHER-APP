@@ -4,6 +4,7 @@ import '../services/weather_service.dart';
 import '../services/notification_service.dart';
 import '../widgets/weather_card.dart';
 
+//this screen displays the 10 day weather forecast for the current location of the user
 class CurrentLocationScreen extends StatefulWidget {
   const CurrentLocationScreen({super.key});
 
@@ -20,33 +21,42 @@ class _CurrentLocationScreenState extends State<CurrentLocationScreen> {
     _fetchWeather();
   }
 
+  //fetches location,weather,and city name
   void _fetchWeather() async {
-    final location = await LocationService().getCurrentLocation();
+    final location =
+        await LocationService()
+            .getCurrentLocation(); //get user current coordinates
 
+    //get weather data using latitude and longitude
     final data = await WeatherService().getWeatherByLocation(
       location.latitude,
       location.longitude,
     );
-
+    //reverse gecode ot get human readable city/country name
     final cityName = await WeatherService().getCityNameFromCoordinates(
       location.latitude,
       location.longitude,
     );
 
+    //replace the coordinate based address with a readable city name
     data['resolvedAddress'] = cityName;
 
+    //show local notification with current temperature
     await NotificationService().showNotification(
       "Weather Update",
       "Current temp: ${data['currentConditions']['temp']}°C",
     );
 
+    //update the state with the fetched weather data
     setState(() => _weatherData = data);
   }
 
+  //utulity function to clean and format the address for display
   String formatAddress(String address) {
     final parts = address.split(',');
     String firstPart = parts.isNotEmpty ? parts[0].trim() : '';
 
+    //removes any plus code format if included
     if (firstPart.contains('+')) {
       final plusSplit = firstPart.split(' ');
       plusSplit.removeWhere((word) => word.contains('+'));
@@ -57,8 +67,8 @@ class _CurrentLocationScreenState extends State<CurrentLocationScreen> {
     return (firstPart.isNotEmpty && country.isNotEmpty)
         ? '$firstPart, $country'
         : firstPart.isNotEmpty
-            ? firstPart
-            : 'Your Location';
+        ? firstPart
+        : 'Your Location';
   }
 
   @override
@@ -70,12 +80,12 @@ class _CurrentLocationScreenState extends State<CurrentLocationScreen> {
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
-        foregroundColor: Colors.white, 
+        foregroundColor: Colors.white,
       ),
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFF1E3C72), Color(0xFF2A5298)], 
+            colors: [Color(0xFF1E3C72), Color(0xFF2A5298)],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -83,72 +93,79 @@ class _CurrentLocationScreenState extends State<CurrentLocationScreen> {
         child: SafeArea(
           child: Padding(
             padding: const EdgeInsets.all(20.0),
-            child: _weatherData == null
-                ? const Center(child: CircularProgressIndicator(color: Colors.white))
-                : Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      const SizedBox(height: 10),
+            child:
+                _weatherData == null
+                    ? const Center(
+                      child: CircularProgressIndicator(color: Colors.white),
+                    )
+                    : Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        const SizedBox(height: 10),
 
-                      // City Name Header
-                      Text(
-                        formatAddress(_weatherData!['resolvedAddress'] ?? ''),
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          shadows: [
-                            Shadow(
-                              blurRadius: 4,
-                              color: Colors.black26,
-                              offset: Offset(1, 1),
-                            )
-                          ],
-                        ),
-                      ),
-
-                      const SizedBox(height: 12),
-
-                      //Forecast Section Title
-                      Container(
-                        margin: const EdgeInsets.symmetric(vertical: 8),
-                        padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(30),
-                          color: const Color(0xFF1E3C72),
-                        ),
-                        child: const Text(
-                          "10-Day Forecast",
+                        // City Name Header
+                        Text(
+                          formatAddress(_weatherData!['resolvedAddress'] ?? ''),
                           textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
+                          style: const TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
                             color: Colors.white,
-                            letterSpacing: 0.5,
+                            shadows: [
+                              Shadow(
+                                blurRadius: 4,
+                                color: Colors.black26,
+                                offset: Offset(1, 1),
+                              ),
+                            ],
                           ),
                         ),
-                      ),
 
-                      const SizedBox(height: 10),
+                        const SizedBox(height: 12),
 
-                      // Weather Forecast Cards
-                      Expanded(
-                        child: ListView.builder(
-                          itemCount: 10,
-                          itemBuilder: (context, index) {
-                            final day = _weatherData!['days'][index];
-                            return WeatherCard(
-                              data: {
-                                'currentConditions': day,
-                                'resolvedAddress': _weatherData!['resolvedAddress'],
-                              },
-                            );
-                          },
+                        //Forecast Section Title
+                        Container(
+                          margin: const EdgeInsets.symmetric(vertical: 8),
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 6,
+                            horizontal: 12,
+                          ),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(30),
+                            color: const Color(0xFF1E3C72),
+                          ),
+                          child: const Text(
+                            "10-Day Forecast",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
+
+                        const SizedBox(height: 10),
+
+                        // Weather Forecast Cards
+                        Expanded(
+                          child: ListView.builder(
+                            itemCount: 10,
+                            itemBuilder: (context, index) {
+                              final day = _weatherData!['days'][index];
+                              return WeatherCard(
+                                data: {
+                                  'currentConditions': day,
+                                  'resolvedAddress':
+                                      _weatherData!['resolvedAddress'],
+                                },
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
           ),
         ),
       ),

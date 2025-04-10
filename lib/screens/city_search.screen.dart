@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../services/weather_service.dart';
 import '../widgets/weather_card.dart';
 
+//stateful widget for searching weather by city name
 class CitySearchScreen extends StatefulWidget {
   const CitySearchScreen({super.key});
 
@@ -15,10 +16,12 @@ class _CitySearchScreenState extends State<CitySearchScreen> {
   bool _isLoading = false;
   String? _error;
 
+  //handles the search logic when the user enters a city name
   void _searchCityWeather() async {
     final city = _controller.text.trim();
     if (city.isEmpty) return;
 
+    //show loading and clear previous errors or data
     setState(() {
       _isLoading = true;
       _error = null;
@@ -26,7 +29,9 @@ class _CitySearchScreenState extends State<CitySearchScreen> {
     });
 
     try {
-      final data = await WeatherService().getWeatherByCity(city);
+      final data = await WeatherService().getWeatherByCity(
+        city,
+      ); //fetch weather data
       setState(() => _weatherData = data);
     } catch (e) {
       setState(() {
@@ -34,10 +39,12 @@ class _CitySearchScreenState extends State<CitySearchScreen> {
             'Could not fetch weather for "$city". Please check the city name.';
       });
     } finally {
-      setState(() => _isLoading = false);
+      setState(() => _isLoading = false); //stop loading state
     }
   }
 
+  //capitalize the first letter of each word in a comma separated string
+  //e.g. "paris, france" -> "Paris, France"
   String capitalize(String input) {
     if (input.isEmpty) return input;
     return input
@@ -60,9 +67,10 @@ class _CitySearchScreenState extends State<CitySearchScreen> {
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
-        foregroundColor: Colors.white, 
+        foregroundColor: Colors.white,
       ),
 
+      //background gradient styling
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -113,6 +121,7 @@ class _CitySearchScreenState extends State<CitySearchScreen> {
                       textAlign: TextAlign.center,
                     ),
                   )
+                //display fetched weather
                 else if (_weatherData != null)
                   Expanded(
                     child: Column(
@@ -180,6 +189,7 @@ class _CitySearchScreenState extends State<CitySearchScreen> {
                       ],
                     ),
                   )
+                //empty state before any interaction
                 else
                   const Spacer(),
               ],

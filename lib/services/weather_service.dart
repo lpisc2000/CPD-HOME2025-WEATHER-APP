@@ -3,13 +3,18 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
 class WeatherService {
-  static const _weatherApiKey = 'A2E5ZLW6SQ5S9868M6EKYJV9X'; // Visual Crossing key
-  static const _googleApiKey = 'AIzaSyBIdpvrhZcwEo9C6FLc_KSTN47LQLXVwyE'; // Google API key
+  static const _weatherApiKey =
+      'A2E5ZLW6SQ5S9868M6EKYJV9X'; // Visual Crossing key
+  static const _googleApiKey =
+      'AIzaSyBIdpvrhZcwEo9C6FLc_KSTN47LQLXVwyE'; // Google API key
   static const _weatherBaseUrl =
       'https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline';
 
   // Get 10-day forecast by coordinates
-  Future<Map<String, dynamic>> getWeatherByLocation(double lat, double lon) async {
+  Future<Map<String, dynamic>> getWeatherByLocation(
+    double lat,
+    double lon,
+  ) async {
     final now = DateTime.now();
     final tenDaysLater = now.add(const Duration(days: 9));
     final startDate = DateFormat('yyyy-MM-dd').format(now);
