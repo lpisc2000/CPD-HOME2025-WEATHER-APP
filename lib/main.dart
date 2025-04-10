@@ -4,12 +4,15 @@ import 'package:weather_api/screens/city_search_screen.dart';
 import 'screens/current_location_screen.dart';
 import 'services/notification_service.dart';
 
+// this is the main entry point of the Weather App.
+// it initializes the app and sets up the home screen.
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await NotificationService().init();
   runApp(const MyApp());
 }
 
+//root widget for the app
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -32,6 +35,8 @@ class MyApp extends StatelessWidget {
   }
 }
 
+//main screen of the app
+// it contains the navigation options to check the weather by current location or city search.
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -40,7 +45,9 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final PageController _pageController = PageController();
+  final PageController _pageController =
+      PageController(); //controller for rotating tips
+  //list of weather tips to be displayed in the rotating card
   final List<String> tips = [
     "☀️ Always wear sunscreen, even on cloudy days!",
     "🌧️ Don’t forget your umbrella during April showers.",
@@ -54,6 +61,8 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+
+    //start a timer to update the tips every 10 seconds
     _tipTimer = Timer.periodic(const Duration(seconds: 10), (timer) {
       if (_pageController.hasClients) {
         _currentPage = (_currentPage + 1) % tips.length;
@@ -91,6 +100,8 @@ class _HomePageState extends State<HomePage> {
         ),
         centerTitle: true,
       ),
+
+      //background with gradient
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -126,6 +137,8 @@ class _HomePageState extends State<HomePage> {
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 40),
+
+                  //navigarion cards for current location
                   _buildNavigationCard(
                     context,
                     icon: Icons.my_location,
@@ -140,6 +153,8 @@ class _HomePageState extends State<HomePage> {
                     },
                   ),
                   const SizedBox(height: 20),
+
+                  //navigatrion card for city search
                   _buildNavigationCard(
                     context,
                     icon: Icons.search,
@@ -155,7 +170,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   const SizedBox(height: 30),
 
-                  //Rotating Weather Tip Card
+                  //weather tip card that rotates every 10 seconds
                   Container(
                     height: 120,
                     decoration: BoxDecoration(
@@ -175,6 +190,8 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ),
                         const SizedBox(height: 10),
+
+                        //rotating text using pageview
                         Expanded(
                           child: PageView.builder(
                             controller: _pageController,
@@ -206,6 +223,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  //helper widget for navigation card (used for location and city search)
   Widget _buildNavigationCard(
     BuildContext context, {
     required IconData icon,
