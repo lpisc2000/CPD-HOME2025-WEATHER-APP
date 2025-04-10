@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:weather_api/screens/city_search.screen.dart';
+import 'package:weather_api/screens/city_search_screen.dart';
 import 'screens/current_location_screen.dart';
 import 'services/notification_service.dart';
 
